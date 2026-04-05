@@ -73,7 +73,7 @@ The `clone()` system call creates a new process with isolated views of system re
 - `CLONE_NEWNET` - network namespace (network isolation)
 - `CLONE_NEWUTS` - UTS namespace (hostname isolation)
 - `CLONE_NEWIPC` - IPC namespace (inter-process communication isolation)
-- `CLONE_NEWCGROUP` — cgroup namespace
+- `CLONE_NEWCGROUP` - cgroup namespace
 
 
 ### 2. Capabilities
