@@ -39,12 +39,12 @@ Linux capabilities subdivide the power of root into granular permissions. This p
 
 ### 3. Seccomp
 Specific system calls are blocked even after capability dropping:
-- `chmod` with setuid/setgid bits — prevents privilege escalation
-- `TIOCSTI` ioctl — prevents injecting input into the parent terminal
-- `keyctl`, `add_key`, `request_key` — kernel keyring is not namespaced
-- `ptrace` — could be used to escape seccomp filters
-- `userfaultfd` — used in kernel exploits to pause execution
-- `perf_event_open` — can leak kernel addresses
+- `chmod` with setuid/setgid bits - prevents privilege escalation
+- `TIOCSTI` ioctl - prevents injecting input into the parent terminal
+- `keyctl`, `add_key`, `request_key` - kernel keyring is not namespaced
+- `ptrace` - could be used to escape seccomp filters
+- `userfaultfd` - used in kernel exploits to pause execution
+- `perf_event_open` - can leak kernel addresses
 
 ### 4. Filesystem Isolation (Mount Dance)
 The container gets its own root filesystem via:
@@ -116,15 +116,13 @@ PID   USER     TIME  COMMAND
 / # exit
 ```
 
-Notice the hostname is a randomly generated tarot card name a fun touch from the original author.
-
 ## Notes
 
 - This code was written for **Linux kernel 4.7/4.8** originally. If you're running a modern kernel (5.x or 6.x) you need to update the kernel version check in `main()`.
 - If your system uses **cgroups v2** (most modern Linux systems and WSL2), the resource limiting section needs to be disabled as the code uses cgroups v1 paths.
 - This is a **learning project** not intended for production use. For production containers use Docker, Podman, or containerd.
 
-## What This Teaches You
+## What This Taught Me
 
 By reading and running this code you learn:
 - How Docker and other container runtimes actually work under the hood
@@ -134,6 +132,12 @@ By reading and running this code you learn:
 - How `pivot_root` changes the filesystem view of a process
 - Why certain kernel features are dangerous in containers
 
+## Relevance to Distributed Systems
+Understanding containers at this level is directly relevant to distributed systems. Container orchestration platforms like Kubernetes rely entirely on these
+kernel primitives. Knowing what namespaces, cgroups, and capabilities actually do makes it much easier to reason about things like container isolation, resource
+limits, pod security policies, and why certain container escape vulnerabilities exist. This project gave me a much stronger foundation for understanding how
+distributed workloads are actually isolated from each other at the OS level.
+
 ## License
 
 GPLv3 — see [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
@@ -141,3 +145,5 @@ GPLv3 — see [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org
 ## Credits
 
 Based on the original work by [Lizzie Dixon](https://blog.lizzie.io/linux-containers-in-500-loc.html).
+
+
