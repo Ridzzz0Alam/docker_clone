@@ -2,7 +2,6 @@
 
 A minimal Linux container runtime built from scratch in C, based on the article ["Linux Containers in 500 Lines of Code"](https://blog.lizzie.io/linux-containers-in-500-loc.html) by Lizzie Dixon.
 
-This project implements a working container using raw Linux kernel features — no Docker, no libraries, just the kernel itself.
 
 ## What It Does
 
@@ -117,13 +116,13 @@ PID   USER     TIME  COMMAND
 / # exit
 ```
 
-Notice the hostname is a randomly generated tarot card name — a fun touch from the original author.
+Notice the hostname is a randomly generated tarot card name a fun touch from the original author.
 
 ## Notes
 
 - This code was written for **Linux kernel 4.7/4.8** originally. If you're running a modern kernel (5.x or 6.x) you need to update the kernel version check in `main()`.
 - If your system uses **cgroups v2** (most modern Linux systems and WSL2), the resource limiting section needs to be disabled as the code uses cgroups v1 paths.
-- This is a **learning project** — not intended for production use. For production containers use Docker, Podman, or containerd.
+- This is a **learning project** not intended for production use. For production containers use Docker, Podman, or containerd.
 
 ## What This Teaches You
 
