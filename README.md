@@ -2,6 +2,12 @@
 
 A minimal Linux container runtime built from scratch in C, based on the article ["Linux Containers in 500 Lines of Code"](https://blog.lizzie.io/linux-containers-in-500-loc.html) by Lizzie Dixon.
 
+## Why I Built This
+
+I already had a general idea of how Docker works, but I wanted to go deeper. As someone focusing on distributed systems, understanding how containers work at the
+kernel level felt like an important gap to fill. This project gave me exactly that — a ground-up look at what actually happens when you run a container, without
+any abstractions hiding the details.
+
 
 ## What It Does
 
