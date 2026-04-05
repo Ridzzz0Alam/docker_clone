@@ -9,6 +9,45 @@ kernel level felt like an important gap to fill. This project gave me exactly th
 any abstractions hiding the details.
 
 
+## What I Learned
+
+Containers and Filesystems
+Before this I understood containers at a high level, but I didn't really know what was happening underneath. Building this showed me that a container is not a virtual machine — it's just a regular Linux process with a restricted view of the system. The filesystem isolation is done through a technique called pivot_root, which swaps out the root directory / of the process for a different directory entirely. Once that happens the container literally cannot see the host filesystem.
+
+
+## Namespaces
+This was one of the biggest things I took away from this project. Linux namespaces are what make containers possible. Each namespace type isolates a different part of the system:
+
+PID namespace - the container has its own process list, starts from PID 1
+Mount namespace - the container has its own filesystem view
+Network namespace - the container has its own network interfaces
+UTS namespace - the container can have its own hostname
+IPC namespace - isolated inter-process communication
+Cgroup namespace - isolated resource control view
+
+All of this is done with a single clone() system call with the right flags. That's it. That's what Docker is doing under the hood.
+
+
+## Capabilities and Seccomp 
+
+I also learned about Linux capabilities — how root isn't just one big permission but is actually split into dozens of granular permissions. The container runtime
+carefully drops dangerous ones like CAP_SYS_BOOT (can't reboot the host) and CAP_MKNOD (can't recreate device files to access the raw disk).
+On top of that, seccomp filters block specific system calls entirely — things like ptrace which could be used to escape the sandbox, and TIOCSTI which could
+inject commands into the parent terminal.
+
+
+## The Challenges
+
+This project was genuinely difficult in two ways.
+Understanding the article — The original article is written in literate programming style, meaning the code is split across the article with explanations in
+between. Piecing together what goes where and understanding why each decision was made took real effort.
+
+Running it on WSL2 — Getting this to compile and run on Windows Subsystem for Linux had its own set of challenges. The code was written for Linux kernel 4.7/4.8
+but WSL2 runs kernel 6.6, so the version check had to be updated. WSL2 also uses cgroups v2 while the code expects cgroups v1, which required disabling the
+resource limiting section. On top of that, compiling from the Windows filesystem (/mnt/c/) caused linker errors — the fix was to move everything to the Linux
+filesystem (/home/) first.
+
+
 ## What It Does
 
 Running this program creates an isolated environment where a process has its own:
@@ -21,9 +60,11 @@ Running this program creates an isolated environment where a process has its own
 
 It also drops dangerous Linux capabilities and filters system calls using seccomp to prevent the contained process from escaping or harming the host system.
 
+
 ## How It Works
 
 Modern Linux containers are built on four kernel mechanisms:
+
 
 ### 1. Namespaces
 The `clone()` system call creates a new process with isolated views of system resources. This project uses six namespace types:
@@ -34,6 +75,7 @@ The `clone()` system call creates a new process with isolated views of system re
 - `CLONE_NEWIPC` — IPC namespace (inter-process communication isolation)
 - `CLONE_NEWCGROUP` — cgroup namespace
 
+
 ### 2. Capabilities
 Linux capabilities subdivide the power of root into granular permissions. This project drops dangerous ones including:
 - `CAP_SYS_ADMIN` — prevents mounting, vm86, and other privileged operations
@@ -42,6 +84,7 @@ Linux capabilities subdivide the power of root into granular permissions. This p
 - `CAP_DAC_READ_SEARCH` — prevents the "shocker" container escape exploit
 - `CAP_SYS_MODULE` — prevents loading kernel modules
 - And many more...
+
 
 ### 3. Seccomp
 Specific system calls are blocked even after capability dropping:
@@ -52,6 +95,7 @@ Specific system calls are blocked even after capability dropping:
 - `userfaultfd` - used in kernel exploits to pause execution
 - `perf_event_open` - can leak kernel addresses
 
+
 ### 4. Filesystem Isolation (Mount Dance)
 The container gets its own root filesystem via:
 1. Bind mount the target directory to a temp location
@@ -59,6 +103,7 @@ The container gets its own root filesystem via:
 3. Unmount the old root entirely
 
 This means the container cannot see or access the host filesystem at all.
+
 
 ## Prerequisites
 
@@ -72,11 +117,13 @@ Install dependencies on Ubuntu/Debian:
 sudo apt install gcc libcap-dev libseccomp-dev
 ```
 
+
 ## Building
 
 ```bash
 gcc -Wall -Werror contained.c -o contained -lcap -lseccomp
 ```
+
 
 ## Usage
 
@@ -93,12 +140,14 @@ Then run the container:
 sudo ./contained -m ./busybox-img -u 0 -c /bin/sh
 ```
 
+
 ### Options
 | Flag | Description |
 |------|-------------|
 | `-m` | Path to the root filesystem directory |
 | `-u` | User ID to run as inside the container (0 = root) |
 | `-c` | Command to run inside the container |
+
 
 ### Example Session
 ```
@@ -122,11 +171,13 @@ PID   USER     TIME  COMMAND
 / # exit
 ```
 
+
 ## Notes
 
 - This code was written for **Linux kernel 4.7/4.8** originally. If you're running a modern kernel (5.x or 6.x) you need to update the kernel version check in `main()`.
 - If your system uses **cgroups v2** (most modern Linux systems and WSL2), the resource limiting section needs to be disabled as the code uses cgroups v1 paths.
 - This is a **learning project** not intended for production use. For production containers use Docker, Podman, or containerd.
+
 
 ## What This Taught Me
 
@@ -138,15 +189,18 @@ By reading and running this code you learn:
 - How `pivot_root` changes the filesystem view of a process
 - Why certain kernel features are dangerous in containers
 
+
 ## Relevance to Distributed Systems
 Understanding containers at this level is directly relevant to distributed systems. Container orchestration platforms like Kubernetes rely entirely on these
 kernel primitives. Knowing what namespaces, cgroups, and capabilities actually do makes it much easier to reason about things like container isolation, resource
 limits, pod security policies, and why certain container escape vulnerabilities exist. This project gave me a much stronger foundation for understanding how
 distributed workloads are actually isolated from each other at the OS level.
 
+
 ## License
 
 GPLv3 — see [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 
 ## Credits
 
