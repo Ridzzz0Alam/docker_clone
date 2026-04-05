@@ -12,18 +12,18 @@ any abstractions hiding the details.
 ## What I Learned
 
 Containers and Filesystems
-Before this I understood containers at a high level, but I didn't really know what was happening underneath. Building this showed me that a container is not a virtual machine it's just a regular Linux process with a restricted view of the system. The filesystem isolation is done through a technique called pivot_root, which swaps out the root directory / of the process for a different directory entirely. Once that happens the container literally cannot see the host filesystem.
+Before this I understood containers at a high level, but I didn't really know what was happening underneath. Building this showed me that a container is not a virtual machine it's just a regular Linux process with a restricted view of the system. The filesystem isolation is done through a technique called pivot_root, which swaps out the root directory of the process for a different directory entirely. Once that happens the container literally cannot see the host filesystem.
 
 
 ## Namespaces
 This was one of the biggest things I took away from this project. Linux namespaces are what make containers possible. Each namespace type isolates a different part of the system:
 
-PID namespace - the container has its own process list, starts from PID 1
-Mount namespace - the container has its own filesystem view
-Network namespace - the container has its own network interfaces
-UTS namespace - the container can have its own hostname
-IPC namespace - isolated inter-process communication
-Cgroup namespace - isolated resource control view
+- **PID namespace** - the container has its own process list, starts from PID 1
+- **Mount namespace** - the container has its own filesystem view
+- **Network namespace** - the container has its own network interfaces
+- **UTS namespace** - the container can have its own hostname
+- **IPC namespace** - isolated inter-process communication
+- **Cgroup namespace** - isolated resource control view
 
 All of this is done with a single clone() system call with the right flags. That's it. That's what Docker is doing under the hood.
 
