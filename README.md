@@ -83,7 +83,6 @@ Linux capabilities subdivide the power of root into granular permissions. This p
 - `CAP_MKNOD` - prevents creating device files (e.g. recreating `/dev/sda`)
 - `CAP_DAC_READ_SEARCH` - prevents the "shocker" container escape exploit
 - `CAP_SYS_MODULE` - prevents loading kernel modules
-- And many more...
 
 
 ### 3. Seccomp
