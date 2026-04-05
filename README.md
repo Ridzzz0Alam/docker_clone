@@ -1,4 +1,4 @@
-# Linux Containers in 500 Lines of C
+# A Clone of Docker Container built using C
 
 A minimal Linux container runtime built from scratch in C, based on the article ["Linux Containers in 500 Lines of Code"](https://blog.lizzie.io/linux-containers-in-500-loc.html) by Lizzie Dixon.
 
