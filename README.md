@@ -51,12 +51,12 @@ filesystem (/home/) first.
 ## What It Does
 
 Running this program creates an isolated environment where a process has its own:
-- **Filesystem** — via mount namespaces and `pivot_root`
-- **Hostname** — via UTS namespaces
-- **Process list** — via PID namespaces
-- **Network devices** — via network namespaces
-- **User and group IDs** — via user namespaces
-- **IPC objects** — via IPC namespaces
+- **Filesystem** - via mount namespaces and `pivot_root`
+- **Hostname** - via UTS namespaces
+- **Process list** - via PID namespaces
+- **Network devices** - via network namespaces
+- **User and group IDs** - via user namespaces
+- **IPC objects** - via IPC namespaces
 
 It also drops dangerous Linux capabilities and filters system calls using seccomp to prevent the contained process from escaping or harming the host system.
 
@@ -68,21 +68,21 @@ Modern Linux containers are built on four kernel mechanisms:
 
 ### 1. Namespaces
 The `clone()` system call creates a new process with isolated views of system resources. This project uses six namespace types:
-- `CLONE_NEWNS` — mount namespace (filesystem isolation)
-- `CLONE_NEWPID` — PID namespace (process isolation)
-- `CLONE_NEWNET` — network namespace (network isolation)
-- `CLONE_NEWUTS` — UTS namespace (hostname isolation)
-- `CLONE_NEWIPC` — IPC namespace (inter-process communication isolation)
+- `CLONE_NEWNS` - mount namespace (filesystem isolation)
+- `CLONE_NEWPID` - PID namespace (process isolation)
+- `CLONE_NEWNET` - network namespace (network isolation)
+- `CLONE_NEWUTS` - UTS namespace (hostname isolation)
+- `CLONE_NEWIPC` - IPC namespace (inter-process communication isolation)
 - `CLONE_NEWCGROUP` — cgroup namespace
 
 
 ### 2. Capabilities
 Linux capabilities subdivide the power of root into granular permissions. This project drops dangerous ones including:
-- `CAP_SYS_ADMIN` — prevents mounting, vm86, and other privileged operations
-- `CAP_SYS_BOOT` — prevents rebooting the host
-- `CAP_MKNOD` — prevents creating device files (e.g. recreating `/dev/sda`)
-- `CAP_DAC_READ_SEARCH` — prevents the "shocker" container escape exploit
-- `CAP_SYS_MODULE` — prevents loading kernel modules
+- `CAP_SYS_ADMIN` - prevents mounting, vm86, and other privileged operations
+- `CAP_SYS_BOOT` - prevents rebooting the host
+- `CAP_MKNOD` - prevents creating device files (e.g. recreating `/dev/sda`)
+- `CAP_DAC_READ_SEARCH` - prevents the "shocker" container escape exploit
+- `CAP_SYS_MODULE` - prevents loading kernel modules
 - And many more...
 
 
@@ -199,7 +199,7 @@ distributed workloads are actually isolated from each other at the OS level.
 
 ## License
 
-GPLv3 — see [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
+GPLv3 - see [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 
 ## Credits
