@@ -5,14 +5,14 @@ A minimal Linux container runtime built from scratch in C, based on the article 
 ## Why I Built This
 
 I already had a general idea of how Docker works, but I wanted to go deeper. As someone focusing on distributed systems, understanding how containers work at the
-kernel level felt like an important gap to fill. This project gave me exactly that — a ground-up look at what actually happens when you run a container, without
+kernel level felt like an important gap to fill. This project gave me exactly that a ground-up look at what actually happens when you run a container, without
 any abstractions hiding the details.
 
 
 ## What I Learned
 
 Containers and Filesystems
-Before this I understood containers at a high level, but I didn't really know what was happening underneath. Building this showed me that a container is not a virtual machine — it's just a regular Linux process with a restricted view of the system. The filesystem isolation is done through a technique called pivot_root, which swaps out the root directory / of the process for a different directory entirely. Once that happens the container literally cannot see the host filesystem.
+Before this I understood containers at a high level, but I didn't really know what was happening underneath. Building this showed me that a container is not a virtual machine it's just a regular Linux process with a restricted view of the system. The filesystem isolation is done through a technique called pivot_root, which swaps out the root directory / of the process for a different directory entirely. Once that happens the container literally cannot see the host filesystem.
 
 
 ## Namespaces
@@ -30,7 +30,7 @@ All of this is done with a single clone() system call with the right flags. That
 
 ## Capabilities and Seccomp 
 
-I also learned about Linux capabilities — how root isn't just one big permission but is actually split into dozens of granular permissions. The container runtime
+I also learned about Linux capabilities how root isn't just one big permission but is actually split into dozens of granular permissions. The container runtime
 carefully drops dangerous ones like CAP_SYS_BOOT (can't reboot the host) and CAP_MKNOD (can't recreate device files to access the raw disk).
 On top of that, seccomp filters block specific system calls entirely — things like ptrace which could be used to escape the sandbox, and TIOCSTI which could
 inject commands into the parent terminal.
@@ -39,10 +39,10 @@ inject commands into the parent terminal.
 ## The Challenges
 
 This project was genuinely difficult in two ways.
-Understanding the article — The original article is written in literate programming style, meaning the code is split across the article with explanations in
+Understanding the article. The original article is written in literate programming style, meaning the code is split across the article with explanations in
 between. Piecing together what goes where and understanding why each decision was made took real effort.
 
-Running it on WSL2 — Getting this to compile and run on Windows Subsystem for Linux had its own set of challenges. The code was written for Linux kernel 4.7/4.8
+Running it on WSL2 Getting this to compile and run on Windows Subsystem for Linux had its own set of challenges. The code was written for Linux kernel 4.7/4.8
 but WSL2 runs kernel 6.6, so the version check had to be updated. WSL2 also uses cgroups v2 while the code expects cgroups v1, which required disabling the
 resource limiting section. On top of that, compiling from the Windows filesystem (/mnt/c/) caused linker errors — the fix was to move everything to the Linux
 filesystem (/home/) first.
